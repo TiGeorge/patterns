@@ -5,27 +5,34 @@ import observer.Observer;
 import observer.Subject;
 
 public class StatisticsDisplay implements Observer, DisplayElement {
-    private float temperature;
-    private float humidity;
-    private float pressure;
-    private Subject weatherData;
+    private float maxTemp = 0.0f;
+    private float minTemp = 200;
+    private float tempSum= 0.0f;
+    private int numReadings;
+    private WeatherData weatherData;
 
-    public StatisticsDisplay(Subject weatherData) {
+    public StatisticsDisplay(WeatherData weatherData) {
         this.weatherData = weatherData;
         weatherData.registerObserver(this);
     }
 
-    @Override
     public void update(float temp, float humidity, float pressure) {
-        this.temperature = temp;
-        this.humidity = humidity;
-        this.pressure = pressure;
+        tempSum += temp;
+        numReadings++;
+
+        if (temp > maxTemp) {
+            maxTemp = temp;
+        }
+
+        if (temp < minTemp) {
+            minTemp = temp;
+        }
+
         display();
     }
 
-    @Override
     public void display() {
-        System.out.println("Statistic conditions: " + temperature
-                + "F degrees and " + humidity + "% humidity");
+        System.out.println("Avg/Max/Min temperature = " + (tempSum / numReadings)
+                + "/" + maxTemp + "/" + minTemp);
     }
 }
